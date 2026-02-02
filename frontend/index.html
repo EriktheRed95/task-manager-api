@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        /* Simple styling to make it look nice */
+        body { font-family: sans-serif; max-width: 500px; margin: 50px auto; text-align: center; }
+        input { padding: 10px; width: 70%; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        ul { list-style: none; padding: 0; margin-top: 20px; text-align: left; }
+        li { background: #f9f9f9; border-bottom: 1px solid #eee; padding: 10px; display: flex; justify-content: space-between; }
+        .delete-btn { background-color: #dc3545; font-size: 0.8em; padding: 5px 10px; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>📝 My Task Manager</h1>
+    
+    <div>
+        <input type="text" id="taskInput" placeholder="What do you need to do?">
+        <button onclick="createTask()">Add Task</button>
+    </div>
+
+    <ul id="taskList">
+        </ul>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000/tasks";
+
+        // 1. Function to Get Tasks from Python
+        async function loadTasks() {
+            const response = await fetch(API_URL);
+            const tasks = await response.json();
+            
+            const list = document.getElementById("taskList");
+            list.innerHTML = ""; // Clear list before rebuilding
+
+            tasks.forEach(task => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span>${task.title}</span>
+                    <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // 2. Function to Add a Task
+        async function createTask() {
+            const input = document.getElementById("taskInput");
+            const text = input.value;
+            
+            if (!text) return; // Don't send empty tasks
+
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: text })
+            });
+
+            input.value = ""; // Clear box
+            loadTasks(); // Refresh list
+        }
+
+        // 3. Function to Delete a Task
+        async function deleteTask(id) {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            loadTasks();
+        }
+
+        // Load tasks immediately when page opens
+        loadTasks();
+    </script>
+
+</body>
+</html>
