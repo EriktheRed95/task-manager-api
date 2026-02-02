@@ -1,0 +1,18 @@
+# Python temporary files
+__pycache__/
+*.py[cod]
+
+# Virtual Environment (The "Toolbox")
+venv/
+env/
+.env
+
+# Database (We don't want to upload our local data)
+*.db
+*.sqlite3
+
+# VS Code settings
+.vscode/
+
+# MacOS junk files
+.DS_Store
