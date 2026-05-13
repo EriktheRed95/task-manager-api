@@ -1,50 +1,65 @@
-# Python Task Manager API
+# 📝 Task Manager API
 
-A robust REST API built with **FastAPI** and **SQLAlchemy**. This project demonstrates backend engineering skills including CRUD operations, data validation, and database persistence.
+A small full-stack task manager built around a **FastAPI + SQLAlchemy** REST API and a vanilla-JS frontend. Demonstrates clean CRUD, Pydantic validation, schema separation (input vs. response), CORS-aware deployment, and CI on every push.
 
-## 🚀 Features
-* **Create Tasks:** Add new to-do items to the database.
-* **Read & Search:** View all tasks or filter them by title.
-* **Update:** Mark tasks as completed or edit their details.
-* **Delete:** Remove tasks permanently.
-* **Persistance:** Uses SQLite to save data so it survives server restarts.
-* **Documentation:** Automatic interactive API docs via Swagger UI.
+![CI](https://github.com/EriktheRed95/task-manager-api/actions/workflows/ci.yml/badge.svg)
 
-## 🛠️ Tech Stack
-* **Language:** Python 3.10+
-* **Framework:** FastAPI
-* **Database:** SQLite & SQLAlchemy
-* **Validation:** Pydantic V2
+## Features
 
-## ⚙️ How to Run Locally
+- Create, read, update, and delete tasks
+- Filter tasks by title substring
+- Persistent SQLite via SQLAlchemy (in-memory for tests)
+- Pydantic v2 input/response separation — responses include the auto-generated `id`
+- CORS middleware so the frontend can call the API across origins
+- Vanilla-JS frontend with XSS-safe DOM rendering (no `innerHTML` interpolation)
+- 7 pytest integration tests, GitHub Actions CI
 
-1.  **Clone the repository**
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/task-manager-api.git](https://github.com/YOUR_USERNAME/task-manager-api.git)
-    cd task-manager-api
-    ```
+## Tech stack
 
-2.  **Set up the Virtual Environment**
-    ```bash
-    python -m venv venv
-    
-    # Windows:
-    .\venv\Scripts\activate
-    
-    # Mac/Linux:
-    source venv/bin/activate
-    ```
+`Python 3.11` · `FastAPI` · `SQLAlchemy 2.0` · `Pydantic v2` · `SQLite` · `pytest` · `httpx`
 
-3.  **Install Dependencies**
-    ```bash
-    cd backend
-    pip install -r requirements.txt
-    ```
+## Run locally
 
-4.  **Run the Server**
-    ```bash
-    uvicorn main:app --reload
-    ```
+```bash
+git clone https://github.com/EriktheRed95/task-manager-api.git
+cd task-manager-api/backend
 
-5.  **View the API**
-    Open your browser to: `http://127.0.0.1:8000/docs`
+python -m venv ../venv
+# Windows:  ..\venv\Scripts\activate
+# macOS/Linux: source ../venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+The API is now at `http://127.0.0.1:8000` and the auto-generated docs at `http://127.0.0.1:8000/docs`.
+
+For the frontend, just open `frontend/index.html` in a browser — it talks to the backend at `127.0.0.1:8000` by default.
+
+## Run the tests
+
+```bash
+cd backend
+pytest -v
+```
+
+## Deploy
+
+**Backend (Render.com):** the included [`render.yaml`](render.yaml) is a one-click blueprint.
+1. Push this repo to GitHub.
+2. Create a new "Blueprint" service at [render.com/dashboard](https://dashboard.render.com).
+3. Point it at this repo. Render reads `render.yaml` and provisions a free-tier web service.
+
+**Frontend (Netlify):** the included [`netlify.toml`](netlify.toml) publishes `frontend/` as a static site.
+1. Connect this repo on [app.netlify.com](https://app.netlify.com).
+2. Update `API_URL` in `frontend/index.html` from `http://127.0.0.1:8000/tasks` to your Render URL.
+
+## API
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/tasks` | Create a task |
+| `GET`  | `/tasks` | List all tasks (optional `?title=…` filter) |
+| `GET`  | `/tasks/{id}` | Get one task |
+| `PUT`  | `/tasks/{id}` | Replace a task |
+| `DELETE` | `/tasks/{id}` | Delete a task |

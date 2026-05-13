@@ -1,0 +1,5 @@
+# Netlify config — deploys the static frontend at frontend/.
+[build]
+  publish = "frontend"
+  # No build step needed: it's a single HTML file with inline JS.
+  command = ""

@@ -34,16 +34,26 @@
         async function loadTasks() {
             const response = await fetch(API_URL);
             const tasks = await response.json();
-            
+
             const list = document.getElementById("taskList");
             list.innerHTML = ""; // Clear list before rebuilding
 
             tasks.forEach(task => {
+                // Build nodes via the DOM API instead of innerHTML — using
+                // template strings with ${task.title} is an XSS vector if a
+                // title ever contains markup like "<img src=x onerror=alert(1)>".
                 const li = document.createElement("li");
-                li.innerHTML = `
-                    <span>${task.title}</span>
-                    <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
-                `;
+
+                const span = document.createElement("span");
+                span.textContent = task.title;
+
+                const btn = document.createElement("button");
+                btn.className = "delete-btn";
+                btn.textContent = "Delete";
+                btn.addEventListener("click", () => deleteTask(task.id));
+
+                li.appendChild(span);
+                li.appendChild(btn);
                 list.appendChild(li);
             });
         }
