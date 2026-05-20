@@ -28,7 +28,15 @@
         </ul>
 
     <script>
-        const API_URL = "http://127.0.0.1:8000/tasks";
+        // When opened locally (file:// or localhost) we talk to the dev server;
+        // when served from a real host (Netlify) we talk to the deployed backend.
+        // After deploying the backend, replace the placeholder below with your
+        // Render URL (must be https:// to avoid mixed-content blocking).
+        const LOCAL_HOSTS = ["", "127.0.0.1", "localhost"];
+        const API_BASE = LOCAL_HOSTS.includes(window.location.hostname)
+            ? "http://127.0.0.1:8000"
+            : "https://REPLACE-WITH-RENDER-URL.onrender.com";
+        const API_URL = `${API_BASE}/tasks`;
 
         // 1. Function to Get Tasks from Python
         async function loadTasks() {

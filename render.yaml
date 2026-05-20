@@ -9,3 +9,8 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     autoDeploy: true
+    envVars:
+      # Pin a Python version with prebuilt wheels for all deps. Render's
+      # default tracks the latest release, which can fail to build pydantic-core.
+      - key: PYTHON_VERSION
+        value: "3.12.7"
